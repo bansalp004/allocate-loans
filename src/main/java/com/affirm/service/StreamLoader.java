@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class StreamLoader {
     }
 
     //create yield file
-    public void createExpectedYieldForFacility(File file, Map<Long, BigDecimal> expectedYield, String[] headers) throws IOException {
+    public void createExpectedYieldForFacility(File file, Map<Long, BigInteger> expectedYield, String[] headers) throws IOException {
         CSVWriter writer = new CSVWriter(
                 new FileWriter(file),
                 CSVWriter.DEFAULT_SEPARATOR,

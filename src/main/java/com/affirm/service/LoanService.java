@@ -4,6 +4,7 @@ import com.affirm.model.Facility;
 import com.affirm.model.Loan;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 public class LoanService {
 
     private static final Map<Long, Long> LOAN_TO_FACILITY_MAP = new HashMap<>();
-    private static Map<Long, BigDecimal> FACILITY_ID_TO_EXPECTED_YIELD = new HashMap<>();
+    private static Map<Long, BigInteger> FACILITY_ID_TO_EXPECTED_YIELD = new HashMap<>();
 
     //assign a loan by finding appropriate facility according to its covenant
     public void assignLoanAndCalculateYields(Loan loan, FacilityService facilityService) {
@@ -27,10 +28,10 @@ public class LoanService {
             LOAN_TO_FACILITY_MAP.put(loan.getId(), facilityId);
 
             //calculate yield
-            BigDecimal expectYield = calculateYields(loan, facility);
+            BigInteger expectYield = calculateYields(loan, facility);
 
 
-            System.out.println("facilityId " + facilityId +  " expected yield" + expectYield);
+            System.out.println("facilityId " + facilityId +  " expected yield " + expectYield);
 
             if (FACILITY_ID_TO_EXPECTED_YIELD.get(facilityId) != null) {
                 FACILITY_ID_TO_EXPECTED_YIELD.put(facilityId, FACILITY_ID_TO_EXPECTED_YIELD.get(facilityId).add(expectYield));
@@ -41,7 +42,7 @@ public class LoanService {
     }
 
     //calculate yields for loan and facility
-    private BigDecimal calculateYields(Loan loan, Facility facility) {
+    private BigInteger calculateYields(Loan loan, Facility facility) {
         BigDecimal expectedInterest = BigDecimal.ONE
                 .subtract(loan.getDefaultLikelihood())
                 .multiply(loan.getInterest_rate())
@@ -50,14 +51,14 @@ public class LoanService {
         BigDecimal likelihood = loan.getDefaultLikelihood().multiply(loan.getAmount());
         BigDecimal facilityInterest = facility.getInterest_rate().multiply(loan.getAmount());
 
-        return expectedInterest.subtract(likelihood).subtract(facilityInterest);
+        return expectedInterest.subtract(likelihood).subtract(facilityInterest).toBigInteger();
     }
 
     public Map<Long, Long> getLoanToFacilityMap() {
         return LOAN_TO_FACILITY_MAP;
     }
 
-    public Map<Long, BigDecimal> getFacilityIdToExpectedYield() {
+    public Map<Long, BigInteger> getFacilityIdToExpectedYield() {
         return FACILITY_ID_TO_EXPECTED_YIELD;
     }
 }
